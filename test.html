@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>CRUD Bets</title>
+<style>
+  table, th, td { border: 1px solid black; border-collapse: collapse; padding: 6px; }
+  input, button, select { margin: 4px; }
+  input[type="number"] { width: 100px; }
+  input[type="text"] { width: 150px; }
+  input[type="datetime-local"] { width: 180px; }
+</style>
+</head>
+<body>
+
+<h2>Bets List</h2>
+<table id="betsTable" style="width:100%; max-width:1200px;">
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>matchId</th>
+      <th>team</th>
+      <th>amount</th>
+      <th>userWallet</th>
+      <th>token</th>
+      <th>timestamp</th>
+      <th>status</th>
+      <th>txHash</th>
+      <th>rate</th>
+      <th>claim</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<h3>Add / Edit Bet</h3>
+<form id="betForm" style="max-width:1200px;">
+  <input type="hidden" id="betId" />
+  <input type="text" id="matchId" placeholder="matchId" required />
+  <input type="text" id="team" placeholder="team" required />
+  <input type="number" id="amount" step="0.0001" min="0" placeholder="amount" required />
+  <input type="text" id="userWallet" placeholder="userWallet" required />
+  <input type="text" id="token" placeholder="token (optional)" />
+  <input type="datetime-local" id="timestamp" placeholder="timestamp" required />
+  <input type="text" id="status" placeholder="status" required />
+  <input type="text" id="txHash" placeholder="txHash" required />
+  <input type="number" id="rate" step="0.01" placeholder="rate (optional)" />
+  <input type="number" id="claim" step="0.0001" placeholder="claim (optional)" />
+  <br />
+  <button type="submit">Save</button>
+  <button type="button" id="cancelBtn">Cancel</button>
+</form>
+
+<script>
+  const API_URL = 'https://my-beee.vercel.app/api/products'; // đổi thành đúng URL API bạn deploy
+  const API_KEY = 'mymysupersecretkey123'; // đổi thành API key của bạn
+
+  const tableBody = document.querySelector('#betsTable tbody');
+  const form = document.getElementById('betForm');
+
+  // Các input form
+  const betIdInput = document.getElementById('betId');
+  const matchIdInput = document.getElementById('matchId');
+  const teamInput = document.getElementById('team');
+  const amountInput = document.getElementById('amount');
+  const userWalletInput = document.getElementById('userWallet');
+  const tokenInput = document.getElementById('token');
+  const timestampInput = document.getElementById('timestamp');
+  const statusInput = document.getElementById('status');
+  const txHashInput = document.getElementById('txHash');
+  const rateInput = document.getElementById('rate');
+  const claimInput = document.getElementById('claim');
+
+  // Load danh sách
+  async function fetchBets() {
+    try {
+      const res = await fetch(API_URL, {
+        headers: { 'x-api-key': API_KEY }
+      });
+      if (!res.ok) throw new Error('Failed to fetch');
+      const bets = await res.json();
+      renderBets(bets);
+    } catch (e) {
+      alert('Error loading bets: ' + e.message);
+    }
+  }
+
+  // Render bảng
+  function renderBets(bets) {
+    tableBody.innerHTML = '';
+    bets.forEach(bet => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${bet.id}</td>
+        <td>${bet.matchId}</td>
+        <td>${bet.team}</td>
+        <td>${bet.amount}</td>
+        <td>${bet.userWallet}</td>
+        <td>${bet.token || ''}</td>
+        <td>${new Date(bet.timestamp).toLocaleString()}</td>
+        <td>${bet.status}</td>
+        <td>${bet.txHash}</td>
+        <td>${bet.rate ?? ''}</td>
+        <td>${bet.claim ?? ''}</td>
+        <td>
+          <button onclick="editBet('${bet.id}')">Edit</button>
+          <button onclick="deleteBet('${bet.id}')">Delete</button>
+        </td>
+      `;
+      tableBody.appendChild(tr);
+    });
+  }
+
+  // Điền form để sửa
+  window.editBet = async function(id) {
+    try {
+      const res = await fetch(`${API_URL}/${id}`, {
+        headers: { 'x-api-key': API_KEY }
+      });
+      if (!res.ok) throw new Error('Bet not found');
+      const bet = await res.json();
+
+      betIdInput.value = bet.id;
+      matchIdInput.value = bet.matchId || '';
+      teamInput.value = bet.team || '';
+      amountInput.value = bet.amount || 0;
+      userWalletInput.value = bet.userWallet || '';
+      tokenInput.value = bet.token || '';
+      // convert ISO timestamp to local datetime-local input format
+      timestampInput.value = bet.timestamp ? bet.timestamp.substring(0, 16) : '';
+      statusInput.value = bet.status || '';
+      txHashInput.value = bet.txHash || '';
+      rateInput.value = bet.rate ?? '';
+      claimInput.value = bet.claim ?? '';
+
+    } catch(e) {
+      alert('Error loading bet: ' + e.message);
+    }
+  }
+
+  // Xóa
+  async function deleteBet(id) {
+    if (!confirm('Delete this bet?')) return;
+    try {
+      const res = await fetch(`${API_URL}/${id}`, {
+        method: 'DELETE',
+        headers: { 'x-api-key': API_KEY }
+      });
+      if (!res.ok) throw new Error('Delete failed');
+      alert('Deleted!');
+      fetchBets();
+    } catch (e) {
+      alert('Delete error: ' + e.message);
+    }
+  }
+
+  // Xử lý submit form (create/update)
+  form.onsubmit = async e => {
+    e.preventDefault();
+
+    const id = betIdInput.value.trim();
+    const data = {
+      matchId: matchIdInput.value.trim(),
+      team: teamInput.value.trim(),
+      amount: parseFloat(amountInput.value),
+      userWallet: userWalletInput.value.trim(),
+      token: tokenInput.value.trim() || undefined,
+      timestamp: new Date(timestampInput.value).toISOString(),
+      status: statusInput.value.trim(),
+      txHash: txHashInput.value.trim(),
+      rate: rateInput.value ? parseFloat(rateInput.value) : undefined,
+      claim: claimInput.value ? parseFloat(claimInput.value) : undefined,
+    };
+
+    try {
+      let res;
+      if (id) {
+        res = await fetch(`${API_URL}/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': API_KEY
+          },
+          body: JSON.stringify(data)
+        });
+      } else {
+        res = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': API_KEY
+          },
+          body: JSON.stringify(data)
+        });
+      }
+
+      if (!res.ok) throw new Error('Save failed');
+
+      alert('Saved!');
+      form.reset();
+      fetchBets();
+
+    } catch(e) {
+      alert('Error saving bet: ' + e.message);
+    }
+  };
+
+  // Hủy form
+  document.getElementById('cancelBtn').onclick = () => form.reset();
+
+  fetchBets();
+
+</script>
+
+</body>
+</html>

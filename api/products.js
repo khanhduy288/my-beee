@@ -5,7 +5,15 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export default async function handler(req, res) {
-  // Chỉ cho phép phương thức GET (nếu cần)
+  // CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'x-api-key, Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -21,9 +29,9 @@ export default async function handler(req, res) {
     const jsonDirectory = path.join(process.cwd(), 'data');
     const fileContents = await fs.readFile(path.join(jsonDirectory, 'products.json'), 'utf8');
     const products = JSON.parse(fileContents);
-    return res.status(200).json(products);
+    res.status(200).json(products);
   } catch (err) {
-    console.error('Error reading products:', err);
-    return res.status(500).json({ error: 'Failed to load products' });
+    console.error(err);
+    res.status(500).json({ error: 'Failed to load products' });
   }
 }
