@@ -1,18 +1,14 @@
 import express from 'express';
+import dotenv from 'dotenv';
 import { getProducts } from './api/products.js';
 
+dotenv.config();
+
 const app = express();
-const PORT = 3000;
+const port = process.env.PORT || 3000;
 
-app.get('/api/products', async (req, res) => {
-  try {
-    const products = await getProducts();
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ error: 'Error reading products' });
-  }
-});
+app.get('/api/products', getProducts);
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
 });
