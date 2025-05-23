@@ -1,0 +1,73 @@
+[
+  {
+    "id": "12345",
+    "matchId": "6789",
+    "team": "team1",
+    "amount": 0.05,
+    "userWallet": "0xabc1234...def5678",
+    "timestamp": "2025-05-20T10:30:00.000Z",
+    "status": "pending",
+    "txHash": "0x9f8b7c6a...",
+    "rate": 1.85,
+    "result": null
+  },
+  {
+    "id": "12346",
+    "matchId": "2",
+    "team": "Man City thắng",
+    "amount": 0.01,
+    "userWallet": "0x477473f67Ff2DCFA7F3cB3f5b21D0EA4d7a75768",
+    "token": "USDT",
+    "timestamp": "2025-05-21T04:07:29.400Z",
+    "status": "thua",
+    "txHash": "0xfb5b026823624df52eb6533a7dd2dfb98b5ca41984306f6321932ce4ad5d72a9"
+  },
+  {
+    "id": "12347",
+    "matchId": "2",
+    "team": "Man City thắng",
+    "amount": 0.01,
+    "userWallet": "0x477473f67Ff2DCFA7F3cB3f5b21D0EA4d7a75768",
+    "token": "USDT",
+    "timestamp": "2025-05-21T06:14:31.610Z",
+    "status": "won",
+    "txHash": "0x3f7044c7f0cb8ade88a4ba21e50ce1f68686819d123b0fd22e36633b4d2060a6",
+    "claim": 0.019
+  },
+  {
+    "id": "12348",
+    "matchId": "2",
+    "team": "Bayern thắng",
+    "amount": 0.01,
+    "userWallet": "0x477473f67Ff2DCFA7F3cB3f5b21D0EA4d7a75768",
+    "token": "USDT",
+    "timestamp": "2025-05-22T07:58:09.420Z",
+    "status": "claimed",
+    "txHash": "0x1dc310ba221fa08eefbab39287f4bc47587a5aec17b8c8919f7b102da5357d82",
+    "claim": 0.02
+  },
+  {
+    "id": "12349",
+    "matchId": "4",
+    "team": "a win",
+    "amount": 0.01,
+    "userWallet": "0x477473f67Ff2DCFA7F3cB3f5b21D0EA4d7a75768",
+    "token": "USDT",
+    "timestamp": "2025-05-22T08:02:04.164Z",
+    "status": "won",
+    "txHash": "0xf956847c3101c4fef6c33c3d7e69ebd3b36bbf61acd842ac73c547cf5e0f5b11",
+    "claim": 0.0185
+  },
+  {
+    "id": "12350",
+    "matchId": "2",
+    "team": "Bayern thắng",
+    "amount": 0.01,
+    "userWallet": "0x477473f67Ff2DCFA7F3cB3f5b21D0EA4d7a75768",
+    "token": "USDT",
+    "timestamp": "2025-05-22T09:42:42.677Z",
+    "status": "claimed",
+    "txHash": "0x6051cca44ad02d56331025b5ff7fab1e1aa801edf10085e0ea0f08353191ba33",
+    "claim": 0.02
+  }
+]
